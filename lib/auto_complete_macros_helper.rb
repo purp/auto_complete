@@ -56,10 +56,19 @@ module AutoCompleteMacrosHelper
   # <tt>:method</tt>::               Specifies the HTTP verb to use when the autocompletion
   #                                  request is made. Defaults to POST.
   def auto_complete_field(field_id, options = {})
-    function =  "var #{field_id}_auto_completer = new Ajax.Autocompleter("
-    function << "'#{field_id}', "
-    function << "'" + (options[:update] || "#{field_id}_auto_complete") + "', "
-    function << "'#{url_for(options[:url])}'"
+    if options[:url]
+      function =  "var #{field_id}_auto_completer = new Ajax.Autocompleter("
+      function << "'#{field_id}', "
+      function << "'" + (options[:update] || "#{field_id}_auto_complete") + "', "
+      function << "'#{url_for(options[:url])}'"
+    elsif options[:choicelist]
+      function =  "var #{field_id}_auto_completer = new Autocompleter.Local("
+      function << "'#{field_id}', "
+      function << "'" + (options[:update] || "#{field_id}_auto_complete") + "', "
+      function << options[:choicelist].to_json
+    else
+      raise 'You must supply either a URL or a choicelist'
+    end
     
     js_options = {}
     js_options[:tokens] = array_or_string_for_javascript(options[:tokens]) if options[:tokens]
@@ -69,6 +78,13 @@ module AutoCompleteMacrosHelper
     js_options[:paramName]  = "'#{options[:param_name]}'" if options[:param_name]
     js_options[:frequency]  = "#{options[:frequency]}" if options[:frequency]
     js_options[:method]     = "'#{options[:method].to_s}'" if options[:method]
+    
+    if options[:choicelist]
+      [:choices, :partial_search, :full_search, :partial_chars, :ignore_case].each do |opt|
+        jsOpt = opt.to_s.camelize(:lower).to_sym
+        js_options[jsOpt] = options[opt].to_json unless options[opt].nil?
+      end
+    end
 
     { :after_update_element => :afterUpdateElement, 
       :on_show => :onShow, :on_hide => :onHide, :min_chars => :minChars }.each do |k,v|
