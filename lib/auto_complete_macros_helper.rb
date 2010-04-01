@@ -71,24 +71,16 @@ module AutoCompleteMacrosHelper
     end
     
     js_options = {}
-    js_options[:tokens] = array_or_string_for_javascript(options[:tokens]) if options[:tokens]
     js_options[:callback]   = "function(element, value) { return #{options[:with]} }" if options[:with]
-    js_options[:indicator]  = "'#{options[:indicator]}'" if options[:indicator]
-    js_options[:select]     = "'#{options[:select]}'" if options[:select]
-    js_options[:paramName]  = "'#{options[:param_name]}'" if options[:param_name]
-    js_options[:frequency]  = "#{options[:frequency]}" if options[:frequency]
-    js_options[:method]     = "'#{options[:method].to_s}'" if options[:method]
-    
-    if options[:completions]
-      [:choices, :partial_search, :full_search, :partial_chars, :ignore_case].each do |opt|
-        jsOpt = opt.to_s.camelize(:lower).to_sym
-        js_options[jsOpt] = options[opt].to_json unless options[opt].nil?
-      end
-    end
 
-    { :after_update_element => :afterUpdateElement, 
-      :on_show => :onShow, :on_hide => :onHide, :min_chars => :minChars }.each do |k,v|
-      js_options[v] = options[k] if options[k]
+    parameters = [:tokens, :indicator, :select, :param_name, :frequency, :method, :min_chars]
+    parameters += [:choices, :partial_search, :full_search, :partial_chars, :ignore_case] if options[:completions]
+
+    callbacks = [:after_update_element, :on_show, :on_hide]
+
+    (parameters + callbacks).each do |opt|
+      jsOpt = opt.to_s.camelize(:lower).to_sym
+      js_options[jsOpt] = callbacks.include?(opt) ? options[opt] : options[opt].to_json unless options[opt].nil?
     end
 
     function << (', ' + options_for_javascript(js_options) + ')')
