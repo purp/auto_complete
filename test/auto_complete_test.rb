@@ -27,9 +27,9 @@ class AutoCompleteTest < Test::Unit::TestCase
     # Ajax.Autocompleter
     assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Ajax.Autocompleter('some_input', 'some_input_auto_complete', 'http://www.example.com/autocomplete', {})\n//]]>\n</script>),
       auto_complete_field("some_input", :url => { :action => "autocomplete" });
-    assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Ajax.Autocompleter('some_input', 'some_input_auto_complete', 'http://www.example.com/autocomplete', {tokens:','})\n//]]>\n</script>),
+    assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Ajax.Autocompleter('some_input', 'some_input_auto_complete', 'http://www.example.com/autocomplete', {tokens:","})\n//]]>\n</script>),
       auto_complete_field("some_input", :url => { :action => "autocomplete" }, :tokens => ',');
-    assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Ajax.Autocompleter('some_input', 'some_input_auto_complete', 'http://www.example.com/autocomplete', {tokens:[',']})\n//]]>\n</script>),
+    assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Ajax.Autocompleter('some_input', 'some_input_auto_complete', 'http://www.example.com/autocomplete', {tokens:[","]})\n//]]>\n</script>),
       auto_complete_field("some_input", :url => { :action => "autocomplete" }, :tokens => [',']);  
     assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Ajax.Autocompleter('some_input', 'some_input_auto_complete', 'http://www.example.com/autocomplete', {minChars:3})\n//]]>\n</script>),
       auto_complete_field("some_input", :url => { :action => "autocomplete" }, :min_chars => 3);
@@ -40,23 +40,23 @@ class AutoCompleteTest < Test::Unit::TestCase
     assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Ajax.Autocompleter('some_input', 'some_input_auto_complete', 'http://www.example.com/autocomplete', {afterUpdateElement:function(element,value){alert('You have chosen: '+value)}})\n//]]>\n</script>),
       auto_complete_field("some_input", :url => { :action => "autocomplete" }, 
         :after_update_element => "function(element,value){alert('You have chosen: '+value)}");
-    assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Ajax.Autocompleter('some_input', 'some_input_auto_complete', 'http://www.example.com/autocomplete', {paramName:'huidriwusch'})\n//]]>\n</script>),
+    assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Ajax.Autocompleter('some_input', 'some_input_auto_complete', 'http://www.example.com/autocomplete', {paramName:"huidriwusch"})\n//]]>\n</script>),
       auto_complete_field("some_input", :url => { :action => "autocomplete" }, :param_name => 'huidriwusch');
-    assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Ajax.Autocompleter('some_input', 'some_input_auto_complete', 'http://www.example.com/autocomplete', {method:'get'})\n//]]>\n</script>),
+    assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Ajax.Autocompleter('some_input', 'some_input_auto_complete', 'http://www.example.com/autocomplete', {method:"get"})\n//]]>\n</script>),
       auto_complete_field("some_input", :url => { :action => "autocomplete" }, :method => :get);
       # Autocompleter.Local
       assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Autocompleter.Local('some_input', 'some_input_auto_complete', ["Beth","Sam","Cassie","Peanut"], {})\n//]]>\n</script>),
-        auto_complete_field("some_input", :choicelist => %w(Beth Sam Cassie Peanut));
+        auto_complete_field("some_input", :completions => %w(Beth Sam Cassie Peanut));
       assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Autocompleter.Local('some_input', 'some_input_auto_complete', ["Beth","Sam","Cassie","Peanut"], {choices:2})\n//]]>\n</script>),
-        auto_complete_field("some_input", :choicelist => %w(Beth Sam Cassie Peanut), :choices => 2);
+        auto_complete_field("some_input", :completions => %w(Beth Sam Cassie Peanut), :choices => 2);
       assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Autocompleter.Local('some_input', 'some_input_auto_complete', ["Beth","Sam","Cassie","Peanut"], {partialSearch:false})\n//]]>\n</script>),
-        auto_complete_field("some_input", :choicelist => %w(Beth Sam Cassie Peanut), :partial_search => false);  
+        auto_complete_field("some_input", :completions => %w(Beth Sam Cassie Peanut), :partial_search => false);  
       assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Autocompleter.Local('some_input', 'some_input_auto_complete', ["Beth","Sam","Cassie","Peanut"], {partialChars:3})\n//]]>\n</script>),
-        auto_complete_field("some_input", :choicelist => %w(Beth Sam Cassie Peanut), :partial_chars => 3);
+        auto_complete_field("some_input", :completions => %w(Beth Sam Cassie Peanut), :partial_chars => 3);
       assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Autocompleter.Local('some_input', 'some_input_auto_complete', ["Beth","Sam","Cassie","Peanut"], {fullSearch:true})\n//]]>\n</script>),
-        auto_complete_field("some_input", :choicelist => %w(Beth Sam Cassie Peanut), :full_search => true);
+        auto_complete_field("some_input", :completions => %w(Beth Sam Cassie Peanut), :full_search => true);
       assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nvar some_input_auto_completer = new Autocompleter.Local('some_input', 'some_input_auto_complete', ["Beth","Sam","Cassie","Peanut"], {ignoreCase:false})\n//]]>\n</script>),
-        auto_complete_field("some_input", :choicelist => %w(Beth Sam Cassie Peanut), :ignore_case => false);
+        auto_complete_field("some_input", :completions => %w(Beth Sam Cassie Peanut), :ignore_case => false);
   end
   
   def test_auto_complete_result

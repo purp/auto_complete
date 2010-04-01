@@ -1,10 +1,9 @@
 module AutoCompleteMacrosHelper      
-  # Adds autocomplete functionality to the text input field with the 
-  # DOM ID specified by +field_id+. You supply either an array of possible completions
-  # (aka local autocompletion) or a URL which will supply valid completions via an AJAX request.
+  # Adds AJAX autocomplete functionality to the text input field with the 
+  # DOM ID specified by +field_id+.
   #
-  # When using AJAX autocompletion, this function expects that the called action returns
-  # an HTML <ul> list, or nothing if no entries should be displayed for autocompletion.
+  # This function expects that the called action returns an HTML <ul> list,
+  # or nothing if no entries should be displayed for autocompletion.
   #
   # You'll probably want to turn the browser's built-in autocompletion off,
   # so be sure to include an <tt>autocomplete="off"</tt> attribute with your text
@@ -14,12 +13,11 @@ module AutoCompleteMacrosHelper
   # This object is useful if you for example want to trigger the auto-complete suggestions through
   # other means than user input (for that specific case, call the <tt>activate</tt> method on that object). 
   # 
-  # Required +options+ are one and only one of:
+  # Required +options+ are:
   # <tt>:url</tt>::                  URL to call for autocompletion results
   #                                  in url_for format.
-  # <tt>:completions</tt>::          Array from which to choose autocompletions
   # 
-  # Additional +options+ for both local and AJAX autocompletion are:
+  # Addtional +options+ are:
   # <tt>:update</tt>::               Specifies the DOM ID of the element whose 
   #                                  innerHTML should be updated with the autocomplete
   #                                  entries returned by the AJAX request. 
@@ -57,35 +55,19 @@ module AutoCompleteMacrosHelper
   #                                  the entire element is used.
   # <tt>:method</tt>::               Specifies the HTTP verb to use when the autocompletion
   #                                  request is made. Defaults to POST.
-  # 
-  # Additional +options+ for local autocompletion only are:
-  # <tt>:choices</tt>::              (default: 10) Maximum number of autocompletion choices to offer
-  # <tt>:partial_search</tt>::       (default: true) Match text at the beginning of any *word* in
-  #                                  the strings of the completion array. If false, the 
-  #                                  autocompleter will match entered text only at the beginning
-  #                                  of strings in the completions array. If you want to
-  #                                  search anywhere in the string regardless of word boundaries,
-  #                                  additionally set the <tt>:full_search</tt> option to true.
-  # <tt>:partial_chars</tt>::        (default: 2) How many characters to enter before triggering
-  #                                  a partial match (unlike minChars, which defines
-  #                                  how many characters are required to do any match
-  #                                  at all).
-  # <tt>:full_search</tt>::          (default: false) Search anywhere in completion array
-  #                                  strings, not just at beginning of words or strings
-  # <tt>:ignore_case</tt>::          (default: true) Ignore case when autocompleting.
   def auto_complete_field(field_id, options = {})
     if options[:url]
       function =  "var #{field_id}_auto_completer = new Ajax.Autocompleter("
       function << "'#{field_id}', "
       function << "'" + (options[:update] || "#{field_id}_auto_complete") + "', "
       function << "'#{url_for(options[:url])}'"
-    elsif options[:completions]
+    elsif options[:choicelist]
       function =  "var #{field_id}_auto_completer = new Autocompleter.Local("
       function << "'#{field_id}', "
       function << "'" + (options[:update] || "#{field_id}_auto_complete") + "', "
-      function << options[:completions].to_json
+      function << options[:choicelist].to_json
     else
-      raise 'You must supply either a URL or an array of completions'
+      raise 'You must supply either a URL or a choicelist'
     end
     
     js_options = {}
@@ -97,7 +79,7 @@ module AutoCompleteMacrosHelper
     js_options[:frequency]  = "#{options[:frequency]}" if options[:frequency]
     js_options[:method]     = "'#{options[:method].to_s}'" if options[:method]
     
-    if options[:completions]
+    if options[:choicelist]
       [:choices, :partial_search, :full_search, :partial_chars, :ignore_case].each do |opt|
         jsOpt = opt.to_s.camelize(:lower).to_sym
         js_options[jsOpt] = options[opt].to_json unless options[opt].nil?
