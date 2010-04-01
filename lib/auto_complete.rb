@@ -26,9 +26,9 @@ module AutoComplete
   # For help on defining text input fields with autocompletion, 
   # see ActionView::Helpers::JavaScriptHelper.
   #
-  # For more examples, see script.aculo.us:
-  # * http://script.aculo.us/demos/ajax/autocompleter
-  # * http://script.aculo.us/demos/ajax/autocompleter_customized
+  # For more documentation, see the script.aculo.us wiki at github:
+  # * http://wiki.github.com/madrobby/scriptaculous/ajax-autocompleter
+  # * http://wiki.github.com/madrobby/scriptaculous/autocompleter-local
   module ClassMethods
     def auto_complete_for(object, method, options = {})
       define_method("auto_complete_for_#{object}_#{method}") do
